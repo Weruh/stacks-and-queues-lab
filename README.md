@@ -92,6 +92,21 @@ By focusing on **LIFO** (last-in, first-out) and **FIFO** (first-in, first-out) 
   - Remove debug prints.
   - Ensure your `.gitignore` ignores `.pyc`, `__pycache__`, etc.
 
+### Run the completed lab
+
+No third-party packages are required. From the project directory, run:
+
+```bash
+python test_structures.py
+```
+
+The bracket validator accepts only `()`, `{}`, and `[]` characters. An empty
+string is balanced; any other character makes the input invalid. `Queue`
+processes entries in first-in, first-out order. Its `peek`, `dequeue`, and
+winner methods return `None` for an empty queue. Winner selection picks a
+random queue position, announces that customer, and removes every entry up to
+and including that position. Entries after the winner stay in the queue.
+
 ---
 
 ## Submission

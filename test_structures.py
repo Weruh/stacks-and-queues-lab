@@ -1,5 +1,5 @@
 import unittest
-import random
+from unittest.mock import patch
 from custom_queue import Queue
 from custom_stack import is_valid_parentheses
 
@@ -33,6 +33,30 @@ class TestQueueLab(unittest.TestCase):
         print(f"[Queue State] Remaining: {self.queue.items}")
         print("[Pass] Winner selected and queue dequeued properly")
 
+    def test_fifo_and_empty_queue(self):
+        self.assertEqual(self.queue.dequeue(), "Customer #1")
+        self.assertEqual(self.queue.peek(), "Customer #2")
+        for _ in range(19):
+            self.queue.dequeue()
+        self.assertTrue(self.queue.is_empty())
+        self.assertIsNone(self.queue.peek())
+        self.assertIsNone(self.queue.dequeue())
+        self.assertIsNone(self.queue.select_and_announce_winner())
+
+    def test_winner_removes_exactly_through_selected_position(self):
+        with patch("custom_queue.random.randrange", return_value=2):
+            winner = self.queue.select_and_announce_winner()
+        self.assertEqual(winner, "Customer #3")
+        self.assertEqual(self.queue.items, self.customers[3:])
+
+    def test_duplicate_names_still_use_selected_position(self):
+        queue = Queue()
+        for name in ("Alex", "Sam", "Alex", "Lee"):
+            queue.enqueue(name)
+        with patch("custom_queue.random.randrange", return_value=2):
+            self.assertEqual(queue.select_and_announce_winner(), "Alex")
+        self.assertEqual(queue.items, ["Lee"])
+
 class TestStackLab(unittest.TestCase):
     def test_valid(self):
         print("\n[Test] Valid parentheses strings...")
@@ -53,6 +77,12 @@ class TestStackLab(unittest.TestCase):
             print(f"[Stack Check] Final result for {s}: {result}")
             self.assertFalse(result)
             print(f"[Pass] {s} is invalid")
+
+    def test_empty_and_non_bracket_characters(self):
+        self.assertTrue(is_valid_parentheses(""))
+        self.assertFalse(is_valid_parentheses("(a)"))
+        self.assertFalse(is_valid_parentheses("[] "))
+        self.assertFalse(is_valid_parentheses("]"))
 
 if __name__ == "__main__":
     unittest.main()
